@@ -10,7 +10,7 @@
     android:paddingTop="16dp"
     android:paddingRight="16dp"
     android:paddingBottom="16dp"
-    tools:context=".Medics">
+    tools:context=".activitys.Medics">
 
     <LinearLayout
         android:layout_width="match_parent"

@@ -1,8 +1,10 @@
-package com.example.quileia_technical_test;
+package com.example.quileia_technical_test.activitys;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+
+import com.example.quileia_technical_test.R;
 
 public class Patients extends AppCompatActivity {
 
