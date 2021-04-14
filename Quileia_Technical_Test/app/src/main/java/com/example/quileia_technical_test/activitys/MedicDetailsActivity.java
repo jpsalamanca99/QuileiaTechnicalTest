@@ -7,7 +7,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.quileia_technical_test.R;
-import com.example.quileia_technical_test.adapters.AppointmentAdapter;
+import com.example.quileia_technical_test.adapters.AppointmentsAdapter;
 import com.example.quileia_technical_test.models.Appointment;
 import com.example.quileia_technical_test.models.Medic;
 
@@ -24,7 +24,7 @@ public class MedicDetailsActivity extends AppCompatActivity {
     private TextView domicileTextView;
     private ListView listView;
 
-    private AppointmentAdapter appointmentAdapter;
+    private AppointmentsAdapter appointmentAdapter;
     private RealmList<Appointment> appointments;
     private Realm realm;
 
@@ -36,13 +36,13 @@ public class MedicDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_medic_details);
 
-        nameTextView = findViewById(R.id.textView_Name);
-        specialityTextView = findViewById(R.id.textView_Speciality);
-        proCardCodeTextView = findViewById(R.id.textView_ProCardCode);
-        expYearsTextView = findViewById(R.id.textView_ExpYears);
-        officeTextView = findViewById(R.id.textView_Office);
-        domicileTextView = findViewById(R.id.textView_Domicile);
-        listView = findViewById(R.id.listView_Appointments);
+        nameTextView = findViewById(R.id.textView_MedicDetails_Name);
+        specialityTextView = findViewById(R.id.textView_MedicDetails_Speciality);
+        proCardCodeTextView = findViewById(R.id.textView_MedicDetails_ProCardCode);
+        expYearsTextView = findViewById(R.id.textView_MedicDetails_ExpYears);
+        officeTextView = findViewById(R.id.textView_MedicDetails_Office);
+        domicileTextView = findViewById(R.id.textView_MedicDetails_Domicile);
+        listView = findViewById(R.id.listView_MedicDetails_Appointments);
 
         realm = Realm.getDefaultInstance();
 

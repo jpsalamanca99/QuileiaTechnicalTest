@@ -13,13 +13,13 @@ import com.example.quileia_technical_test.models.Medic;
 
 import java.util.List;
 
-public class AppointmentAdapter extends BaseAdapter {
+public class AppointmentsAdapter extends BaseAdapter {
 
     private Context context;
     private List<Appointment> list;
     private int layout;
 
-    public AppointmentAdapter(Context context, List<Appointment> list, int layout) {
+    public AppointmentsAdapter(Context context, List<Appointment> list, int layout) {
         this.context = context;
         this.list = list;
         this.layout = layout;
@@ -47,9 +47,9 @@ public class AppointmentAdapter extends BaseAdapter {
         if (convertView == null){
             convertView = LayoutInflater.from(context).inflate(layout, null);
             viewHolder = new AppointmentItemViewHolder();
-            viewHolder.patientName = (TextView) convertView.findViewById(R.id.textView_PatientName);
-            viewHolder.medicName = (TextView) convertView.findViewById(R.id.textView_MedicName);
-            viewHolder.speciality = (TextView) convertView.findViewById(R.id.textView_Speciality);
+            viewHolder.patientName = (TextView) convertView.findViewById(R.id.textView_AppointmentsItem_PatientName);
+            viewHolder.medicName = (TextView) convertView.findViewById(R.id.textView_AppointmentsItem_MedicName);
+            viewHolder.speciality = (TextView) convertView.findViewById(R.id.textView_AppointmentsItem_Speciality);
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (AppointmentItemViewHolder) convertView.getTag();

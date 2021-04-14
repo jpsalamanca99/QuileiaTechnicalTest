@@ -8,37 +8,15 @@
     android:padding="16dp"
     tools:context=".activitys.MedicDetailsActivity">
 
-
-    <LinearLayout
+    <TextView
+        android:id="@+id/textView_MedicDetails_Name"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/textView_Name"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="0.2"
-            android:textSize="25dp"
-            android:text="" />
-
-        <ImageView
-            android:id="@+id/imageView_Edit"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="0.4"
-            app:srcCompat="@android:drawable/ic_menu_edit" />
-
-        <ImageView
-            android:id="@+id/imageView_Delete"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="0.4"
-            app:srcCompat="@android:drawable/ic_menu_delete" />
-    </LinearLayout>
+        android:layout_height="wrap_content"
+        android:textSize="30dp"
+        android:text="" />
 
     <TextView
-        android:id="@+id/textView_Speciality"
+        android:id="@+id/textView_MedicDetails_Speciality"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="5dp"
@@ -46,7 +24,7 @@
         android:text="" />
 
     <TextView
-        android:id="@+id/textView_ProCardCode"
+        android:id="@+id/textView_MedicDetails_ProCardCode"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="5dp"
@@ -54,7 +32,7 @@
         android:text="" />
 
     <TextView
-        android:id="@+id/textView_ExpYears"
+        android:id="@+id/textView_MedicDetails_ExpYears"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="5dp"
@@ -62,7 +40,7 @@
         android:text="" />
 
     <TextView
-        android:id="@+id/textView_Office"
+        android:id="@+id/textView_MedicDetails_Office"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="5dp"
@@ -70,7 +48,7 @@
         android:text=""/>
 
     <TextView
-        android:id="@+id/textView_Domicile"
+        android:id="@+id/textView_MedicDetails_Domicile"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="5dp"
@@ -78,7 +56,7 @@
         android:text=""/>
 
     <ListView
-        android:id="@+id/listView_Appointments"
+        android:id="@+id/listView_MedicDetails_Appointments"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 

@@ -19,8 +19,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        patients = findViewById(R.id.button_Patients);
-        medics = findViewById(R.id.button_Medics);
+        patients = findViewById(R.id.button_Main_Patients);
+        medics = findViewById(R.id.button_Main_Medics);
 
         patients.setOnClickListener(new View.OnClickListener() {
             @Override

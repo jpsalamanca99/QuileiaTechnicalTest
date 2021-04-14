@@ -9,7 +9,7 @@
         android:orientation="vertical">
 
         <EditText
-            android:id="@+id/editText_CreateMedic_Name"
+            android:id="@+id/editText_CreatePatient_Name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="15dp"
@@ -17,7 +17,7 @@
             android:inputType="text"/>
 
         <EditText
-            android:id="@+id/editText_CreateMedic_LastName"
+            android:id="@+id/editText_CreatePatient_lastName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="15dp"
@@ -25,44 +25,36 @@
             android:inputType="text"/>
 
         <EditText
-            android:id="@+id/editText_CreateMedic_CardCode"
+            android:id="@+id/editText_CreatePatient_BirthDate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="15dp"
-            android:hint="Codigo de tarjeta profesional"
+            android:ems="10"
+            android:inputType="date"
+            android:hint="Fecha de nacimiento dd/MM/yyyy"/>
+
+        <EditText
+            android:id="@+id/editText_CreatePatient_IDNumber"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="15dp"
+            android:hint="Numero de identificacion"
             android:inputType="text"/>
 
         <EditText
-            android:id="@+id/editText_CreateMedic_Speciality"
+            android:id="@+id/editText_CreatePatient_ModeratedFeed"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="15dp"
-            android:hint="Especialidad"
-            android:inputType="text"/>
-
-        <EditText
-            android:id="@+id/editText_CreateMedic_ExpYears"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="15dp"
-            android:hint="Años de experiencia"
-            android:ems="2"
+            android:hint="Valor Cuota Moderadora"
             android:inputType="numberDecimal"/>
 
-        <EditText
-            android:id="@+id/editText_CreateMedic_Office"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="15dp"
-            android:hint="Consultorio"
-            android:inputType="text"/>
-
         <CheckBox
-            android:id="@+id/checkBox_CreateMedic_Domicile"
+            android:id="@+id/checkBox_CreatePatient_InTreatment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="15dp"
-            android:text="Atiende a domicilio"/>
+            android:text="Esta en tratamiento"/>
 
     </LinearLayout>
 </ScrollView>

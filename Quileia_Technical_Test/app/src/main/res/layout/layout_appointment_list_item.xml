@@ -8,21 +8,21 @@
     android:orientation="vertical">
 
     <TextView
-        android:id="@+id/textView_PatientName"
+        android:id="@+id/textView_AppointmentsItem_PatientName"
         android:layout_width="match_parent"
         android:layout_height="35dp"
         android:textSize="30dp"
         android:text=""/>
 
     <TextView
-        android:id="@+id/textView_MedicName"
+        android:id="@+id/textView_AppointmentsItem_MedicName"
         android:layout_width="match_parent"
         android:layout_height="35dp"
         android:textSize="30dp"
         android:text=""/>
 
     <TextView
-        android:id="@+id/textView_Speciality"
+        android:id="@+id/textView_AppointmentsItem_Speciality"
         android:layout_width="match_parent"
         android:layout_height="20dp"
         android:textSize="18dp"

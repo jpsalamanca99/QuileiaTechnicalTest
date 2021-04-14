@@ -8,17 +8,17 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.example.quileia_technical_test.R;
-import com.example.quileia_technical_test.models.Medic;
+import com.example.quileia_technical_test.models.Patient;
 
 import java.util.List;
 
-public class MedicsAdapter extends BaseAdapter {
+public class PatientsAdapter extends BaseAdapter {
 
     private Context context;
-    private List<Medic> list;
+    private List<Patient> list;
     private int layout;
 
-    public MedicsAdapter(Context context, List<Medic> list, int layout) {
+    public PatientsAdapter(Context context, List<Patient> list, int layout) {
         this.context = context;
         this.list = list;
         this.layout = layout;
@@ -30,7 +30,7 @@ public class MedicsAdapter extends BaseAdapter {
     }
 
     @Override
-    public Medic getItem(int position) {
+    public Object getItem(int position) {
         return list.get(position);
     }
 
@@ -41,29 +41,29 @@ public class MedicsAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        MedicItemViewHolder viewHolder;
+        PatientItemViewHolder viewHolder;
 
         if (convertView == null){
             convertView = LayoutInflater.from(context).inflate(layout, null);
-            viewHolder = new MedicItemViewHolder();
-            viewHolder.name = (TextView) convertView.findViewById(R.id.textView_MedicItem_Name);
-            viewHolder.speciality = (TextView) convertView.findViewById(R.id.textView_MedicItem_Speciality);
+            viewHolder = new PatientItemViewHolder();
+            viewHolder.name = (TextView) convertView.findViewById(R.id.textView_PatientItem_Name);
+            viewHolder.idNumber = (TextView) convertView.findViewById(R.id.textView_PatientItem_IDNumber);
             convertView.setTag(viewHolder);
         } else {
-            viewHolder = (MedicItemViewHolder) convertView.getTag();
+            viewHolder = (PatientItemViewHolder) convertView.getTag();
         }
 
-        Medic medic = list.get(position);
-        viewHolder.name.setText(medic.getLastName() + " " + medic.getName());
-        viewHolder.speciality.setText(medic.getSpeciality());
+        Patient patient = list.get(position);
+        viewHolder.name.setText(patient.getLastName() + " " + patient.getLastName());
+        viewHolder.idNumber.setText(patient.getIdNumber());
 
         return convertView;
     }
 
-    public class MedicItemViewHolder {
+    public class PatientItemViewHolder {
 
         TextView name;
-        TextView speciality;
+        TextView idNumber;
 
     }
 

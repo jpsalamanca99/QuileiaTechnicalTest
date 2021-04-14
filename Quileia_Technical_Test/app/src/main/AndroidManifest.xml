@@ -10,7 +10,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Quileia_Technical_Test">
-        <activity android:name=".activitys.MedicDetailsActivity"></activity>
+        <activity android:name=".activitys.PatientDetailsActivity"></activity>
+        <activity android:name=".activitys.MedicDetailsActivity" />
         <activity android:name=".activitys.MedicsActivity" />
         <activity android:name=".activitys.PatientsActivity" />
         <activity android:name=".activitys.MainActivity">

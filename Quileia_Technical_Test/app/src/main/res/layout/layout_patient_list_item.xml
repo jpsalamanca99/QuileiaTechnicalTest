@@ -8,17 +8,17 @@
     android:orientation="vertical">
 
     <TextView
-        android:id="@+id/textView_MedicItem_Name"
+        android:id="@+id/textView_PatientItem_Name"
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:textSize="45dp"
         android:text="Nombre"/>
 
     <TextView
-        android:id="@+id/textView_MedicItem_Speciality"
+        android:id="@+id/textView_PatientItem_IDNumber"
         android:layout_width="match_parent"
         android:layout_height="20dp"
         android:textSize="18dp"
-        android:text="Especialidad"/>
+        android:text="Numero ID"/>
 
 </LinearLayout>
