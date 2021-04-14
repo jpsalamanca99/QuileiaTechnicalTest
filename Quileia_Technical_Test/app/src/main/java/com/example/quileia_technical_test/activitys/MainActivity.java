@@ -36,5 +36,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        this.setTitle("Menu principal");
     }
 }

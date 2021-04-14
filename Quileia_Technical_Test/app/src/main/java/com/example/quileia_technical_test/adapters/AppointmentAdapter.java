@@ -8,17 +8,18 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.example.quileia_technical_test.R;
+import com.example.quileia_technical_test.models.Appointment;
 import com.example.quileia_technical_test.models.Medic;
 
 import java.util.List;
 
-public class MedicsAdapter extends BaseAdapter {
+public class AppointmentAdapter extends BaseAdapter {
 
     private Context context;
-    private List<Medic> list;
+    private List<Appointment> list;
     private int layout;
 
-    public MedicsAdapter(Context context, List<Medic> list, int layout) {
+    public AppointmentAdapter(Context context, List<Appointment> list, int layout) {
         this.context = context;
         this.list = list;
         this.layout = layout;
@@ -30,7 +31,7 @@ public class MedicsAdapter extends BaseAdapter {
     }
 
     @Override
-    public Medic getItem(int position) {
+    public Object getItem(int position) {
         return list.get(position);
     }
 
@@ -41,36 +42,35 @@ public class MedicsAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        MedicItemViewHolder viewHolder;
+        AppointmentItemViewHolder viewHolder;
 
         if (convertView == null){
             convertView = LayoutInflater.from(context).inflate(layout, null);
-            viewHolder = new MedicItemViewHolder();
-            viewHolder.name = (TextView) convertView.findViewById(R.id.textView_Name);
+            viewHolder = new AppointmentItemViewHolder();
+            viewHolder.patientName = (TextView) convertView.findViewById(R.id.textView_PatientName);
+            viewHolder.medicName = (TextView) convertView.findViewById(R.id.textView_MedicName);
             viewHolder.speciality = (TextView) convertView.findViewById(R.id.textView_Speciality);
             convertView.setTag(viewHolder);
         } else {
-            viewHolder = (MedicItemViewHolder) convertView.getTag();
+            viewHolder = (AppointmentItemViewHolder) convertView.getTag();
         }
 
-        Medic medic = list.get(position);
-        viewHolder.name.setText(medic.getLastName() + " " + medic.getName());
-        viewHolder.speciality.setText(medic.getSpeciality());
+        Appointment appointment = list.get(position);
+        viewHolder.patientName.setText(appointment.getPatient().getLastName() + " " + appointment.getPatient().getName());
+        viewHolder.medicName.setText(appointment.getMedic().getLastName() + " " + appointment.getMedic().getName());
+        viewHolder.speciality.setText(appointment.getMedic().getSpeciality());
 
         return convertView;
     }
 
-    public class MedicItemViewHolder {
+    public class AppointmentItemViewHolder {
 
-        TextView name;
+        TextView patientName;
+        TextView medicName;
         TextView speciality;
 
     }
-
 }
-
-
-
 
 
 

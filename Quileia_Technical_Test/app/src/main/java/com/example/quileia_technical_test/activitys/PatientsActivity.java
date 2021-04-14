@@ -42,11 +42,8 @@ public class PatientsActivity extends AppCompatActivity {
     }
 
     /*CRUD actions*/
-    private void createNewPatient(String name, String lastNames, Date birthDate, String idNumber, Medic medic, boolean inTreatment, double moderatedFee, Date newAppointment) {
-        realm.beginTransaction();
-        Patient patient = new Patient(name, lastNames, birthDate, idNumber, medic, inTreatment, moderatedFee, newAppointment);
-        realm.copyToRealm(patient);
-        realm.commitTransaction();
+    private void createNewPatient() {
+
     }
 
     /* Shows the dialog to create a new medic*/

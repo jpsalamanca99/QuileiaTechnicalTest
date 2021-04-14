@@ -53,6 +53,8 @@ public class MedicsActivity extends AppCompatActivity implements RealmChangeList
                 showPopUpToCreate("Crear nuevo médico", "Ingrese los datos del nuevo médico");
             }
         });
+
+        this.setTitle("Lista de medicos");
     }
 
     /*CRUD actions*/
@@ -113,7 +115,7 @@ public class MedicsActivity extends AppCompatActivity implements RealmChangeList
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Intent intent = new Intent(MedicsActivity.this, MedicDetailsActivity.class);
-        intent.putExtra("id", medics.get(position).getID());
+        intent.putExtra("ID", medics.get(position).getID());
         startActivity(intent);
     }
 }

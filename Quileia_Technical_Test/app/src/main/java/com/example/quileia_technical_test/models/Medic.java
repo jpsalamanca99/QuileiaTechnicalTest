@@ -95,4 +95,8 @@ public class Medic extends RealmObject {
     public void setDomicile(boolean domicile) {
         this.domicile = domicile;
     }
+
+    public RealmList<Appointment> getAppointments() {
+        return appointments;
+    }
 }
