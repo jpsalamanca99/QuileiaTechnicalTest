@@ -31,7 +31,7 @@ public class PatientsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_patients);
 
         realm = Realm.getDefaultInstance();
-        floatingActionButton = findViewById(R.id.floatingactionbuttonAdd);
+        floatingActionButton = findViewById(R.id.floatingactionbutton_Add);
 
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
