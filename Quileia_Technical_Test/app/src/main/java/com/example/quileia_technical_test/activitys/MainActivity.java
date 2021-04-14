@@ -19,20 +19,20 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        patients = findViewById(R.id.buttonPatients);
-        medics = findViewById(R.id.buttonMedics);
+        patients = findViewById(R.id.button_Patients);
+        medics = findViewById(R.id.button_Medics);
 
         patients.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, Patients.class);
+                Intent intent = new Intent(MainActivity.this, PatientsActivity.class);
                 startActivity(intent);
             }
         });
         medics.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, Medics.class);
+                Intent intent = new Intent(MainActivity.this, MedicsActivity.class);
                 startActivity(intent);
             }
         });

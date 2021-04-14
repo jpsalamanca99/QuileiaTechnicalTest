@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <EditText
+        android:id="@+id/editText_Name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="15dp"
+        android:hint="Nombre"
+        android:inputType="text"/>
+
+    <EditText
+        android:id="@+id/editText_lastName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="15dp"
+        android:hint="Apellido"
+        android:inputType="text"/>
+
+    <EditText
+        android:id="@+id/editText_cardCode"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="15dp"
+        android:hint="Codigo de tarjeta profesional"
+        android:inputType="text"/>
+
+    <EditText
+        android:id="@+id/editText_speciality"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="15dp"
+        android:hint="Especialidad"
+        android:inputType="text"/>
+
+    <EditText
+        android:id="@+id/editText_expYears"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="15dp"
+        android:hint="Años de experiencia"
+        android:ems="2"
+        android:inputType="numberDecimal"/>
+
+    <EditText
+        android:id="@+id/editText_office"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="15dp"
+        android:hint="Consultorio"
+        android:inputType="text"/>
+
+    <CheckBox
+        android:id="@+id/checkbox_domicile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="15dp"
+        android:text="Atiende a domicilio"/>
+
+</LinearLayout>

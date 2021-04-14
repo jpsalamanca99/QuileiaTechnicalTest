@@ -1,5 +1,7 @@
 package com.example.quileia_technical_test.models;
 
+import com.example.quileia_technical_test.app.MyApplication;
+
 import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
@@ -9,26 +11,21 @@ public class Medic extends RealmObject {
 
     @PrimaryKey
     private int ID;
-    @Required
+
     private String name;
-    @Required
     private String lastName;
-    @Required
     private String proCardCode;
-    @Required
     private String speciality;
-    @Required
     private float experienceYears;
-    @Required
     private String office;
-    @Required
     private boolean domicile;
-    @Required
+
     private RealmList<Appointment> appointments;
 
     public Medic() { } //Only for Realm
 
     public Medic(String name, String lastName, String proCardCode, String speciality, float experienceYears, String office, boolean domicile) {
+        this.ID = MyApplication.MedicID.incrementAndGet();
         this.name = name;
         this.lastName = lastName;
         this.proCardCode = proCardCode;
@@ -36,6 +33,7 @@ public class Medic extends RealmObject {
         this.experienceYears = experienceYears;
         this.office = office;
         this.domicile = domicile;
+        this.appointments = new RealmList<Appointment>();
     }
 
     public int getID() {

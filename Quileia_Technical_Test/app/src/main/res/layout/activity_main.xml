@@ -12,14 +12,14 @@
     tools:context=".activitys.MainActivity">
 
     <Button
-        android:id="@+id/buttonPatients"
+        android:id="@+id/button_Patients"
         android:layout_width="match_parent"
         android:layout_height="120dp"
         android:layout_marginBottom="50dp"
         android:text="Pacientes" />
 
     <Button
-        android:id="@+id/buttonMedics"
+        android:id="@+id/button_Medics"
         android:layout_width="match_parent"
         android:layout_height="120dp"
         android:text="Medicos" />
