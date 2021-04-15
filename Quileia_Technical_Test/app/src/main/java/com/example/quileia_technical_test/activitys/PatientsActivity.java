@@ -91,6 +91,8 @@ public class PatientsActivity extends AppCompatActivity implements RealmChangeLi
         final EditText moderatedFeeEditText = inflatedView.findViewById(R.id.editText_CreatePatient_ModeratedFeed);
         final CheckBox inTreatmentCheckBox = inflatedView.findViewById(R.id.checkBox_CreatePatient_InTreatment);
 
+        
+
         builder.setPositiveButton("Crear", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {

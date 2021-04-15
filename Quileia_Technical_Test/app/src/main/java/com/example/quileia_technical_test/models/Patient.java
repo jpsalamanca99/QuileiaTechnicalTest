@@ -21,8 +21,6 @@ public class Patient extends RealmObject {
     private Medic medic;
     private boolean inTreatment;
     private double moderatedFee;
-    private Date newAppointment;
-
     private RealmList<Appointment>list;
 
     public Patient() { } //Only for Realm
@@ -36,7 +34,6 @@ public class Patient extends RealmObject {
         this.medic = medic;
         this.inTreatment = inTreatment;
         this.moderatedFee = moderatedFee;
-        this.newAppointment = new Date();
         this.list = new RealmList<Appointment>();
     }
 
@@ -100,15 +97,7 @@ public class Patient extends RealmObject {
         this.moderatedFee = moderatedFee;
     }
 
-    public Date getNewAppointment() {
-        return newAppointment;
-    }
-
-    public void setNewAppointment(Date newAppointment) {
-        this.newAppointment = newAppointment;
-    }
-
-    public RealmList<Appointment> getList() {
+    public RealmList<Appointment> getAppointments() {
         return list;
     }
 

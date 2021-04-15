@@ -49,6 +49,12 @@
             android:hint="Valor Cuota Moderadora"
             android:inputType="numberDecimal"/>
 
+        <Spinner
+            android:id="@+id/spinner_CreatePatient_Medic"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="15dp" />
+
         <CheckBox
             android:id="@+id/checkBox_CreatePatient_InTreatment"
             android:layout_width="match_parent"

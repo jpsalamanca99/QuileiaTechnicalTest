@@ -63,31 +63,6 @@ public class MedicDetailsActivity extends AppCompatActivity {
         proCardCodeTextView.setText(medic.getProCardCode());
         expYearsTextView.setText(String.valueOf(medic.getExperienceYears()));
         officeTextView.setText(medic.getOffice());
-        domicileTextView.setText(String.valueOf(medic.isDomicile()));
+        domicileTextView.setText(medic.isDomicile() ? "Trabaja a domicilio" : "No trabaja a domicilio");
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
