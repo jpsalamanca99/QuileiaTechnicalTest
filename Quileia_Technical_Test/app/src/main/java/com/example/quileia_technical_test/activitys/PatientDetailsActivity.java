@@ -111,7 +111,6 @@ public class PatientDetailsActivity extends AppCompatActivity implements RealmCh
         realm.copyToRealmOrUpdate(patient);
         realm.commitTransaction();
     }
-
     /*Edit appointment*/
     private void editAppointment(Appointment appointment, Medic medic, Date date){
         realm.beginTransaction();
@@ -215,14 +214,14 @@ public class PatientDetailsActivity extends AppCompatActivity implements RealmCh
         final EditText dateEditText = inflatedView.findViewById(R.id.editText_EditAppointment);
         dateEditText.setText(appointment.getDate().toString());
         //DB access to get the list of medics
-        RealmResults<Patient> patients = realm.where(Patient.class).findAll();
-        ArrayList<String> patientsNames = new ArrayList<>();
-        for (Patient patient: patients)
-            patientsNames.add(patient.getLastName() + " " + patient.getName());
+        RealmResults<Medic> medics = realm.where(Medic.class).findAll();
+        ArrayList<String> medicsName = new ArrayList<>();
+        for (Medic medic: medics)
+            medicsName.add(medic.getLastName() + " " + medic.getName());
 
         //Spinner configuration
         final Spinner spinner = inflatedView.findViewById(R.id.spinner_EditAppointment);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, patientsNames);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, medicsName);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
 
@@ -237,8 +236,8 @@ public class PatientDetailsActivity extends AppCompatActivity implements RealmCh
                 }
 
                 if (date != null){
-                    Patient patient = patients.get(spinner.getSelectedItemPosition());
-                    editAppointment(appointment, patient, date);
+                    Medic medic = medics.get(spinner.getSelectedItemPosition());
+                    editAppointment(appointment, medic, date);
                 } else {
                     Toast.makeText(getApplicationContext(), "Algun campo no fue llenado", Toast.LENGTH_SHORT).show();
                 }

@@ -111,7 +111,6 @@ public class MedicDetailsActivity extends AppCompatActivity implements RealmChan
         realm.copyToRealmOrUpdate(medic);
         realm.commitTransaction();
     }
-
     /*Edit appointment*/
     private void editAppointment(Appointment appointment, Patient patient, Date date){
         realm.beginTransaction();
