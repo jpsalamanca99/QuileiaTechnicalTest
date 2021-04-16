@@ -20,12 +20,12 @@ public class Appointment extends RealmObject {
 
     public Appointment() { } //Only for Realm
 
-    public Appointment(Patient patient, Medic medic, Date date, boolean status) {
+    public Appointment(Patient patient, Medic medic, Date date) {
         this.ID = MyApplication.AppointmentID.incrementAndGet();
         this.patient = patient;
         this.medic = medic;
         this.date = date;
-        this.status = status;
+        this.status = false;
     }
 
     public int getID() {

@@ -50,6 +50,7 @@ public class AppointmentsAdapter extends BaseAdapter {
             viewHolder.patientName = (TextView) convertView.findViewById(R.id.textView_AppointmentsItem_PatientName);
             viewHolder.medicName = (TextView) convertView.findViewById(R.id.textView_AppointmentsItem_MedicName);
             viewHolder.speciality = (TextView) convertView.findViewById(R.id.textView_AppointmentsItem_Speciality);
+            viewHolder.date = (TextView) convertView.findViewById(R.id.textView_AppointmentsItem_Date);
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (AppointmentItemViewHolder) convertView.getTag();
@@ -59,6 +60,8 @@ public class AppointmentsAdapter extends BaseAdapter {
         viewHolder.patientName.setText(appointment.getPatient().getLastName() + " " + appointment.getPatient().getName());
         viewHolder.medicName.setText(appointment.getMedic().getLastName() + " " + appointment.getMedic().getName());
         viewHolder.speciality.setText(appointment.getMedic().getSpeciality());
+        viewHolder.date.setText(appointment.getDate().toString());
+
 
         return convertView;
     }
@@ -68,6 +71,7 @@ public class AppointmentsAdapter extends BaseAdapter {
         TextView patientName;
         TextView medicName;
         TextView speciality;
+        TextView date;
 
     }
 }

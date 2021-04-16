@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="85dp"
+    android:layout_height="100dp"
     android:paddingLeft="15dp"
     android:paddingRight="15dp"
     android:gravity="center_vertical"
@@ -12,20 +12,27 @@
         android:layout_width="match_parent"
         android:layout_height="35dp"
         android:textSize="30dp"
-        android:text=""/>
+        android:text="Paciente"/>
 
     <TextView
         android:id="@+id/textView_AppointmentsItem_MedicName"
         android:layout_width="match_parent"
         android:layout_height="35dp"
         android:textSize="30dp"
-        android:text=""/>
+        android:text="Medico"/>
 
     <TextView
         android:id="@+id/textView_AppointmentsItem_Speciality"
         android:layout_width="match_parent"
         android:layout_height="20dp"
         android:textSize="18dp"
-        android:text=""/>
+        android:text="Especialidad"/>
+
+    <TextView
+        android:id="@+id/textView_AppointmentsItem_Date"
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:textSize="18dp"
+        android:text="Fecha"/>
 
 </LinearLayout>

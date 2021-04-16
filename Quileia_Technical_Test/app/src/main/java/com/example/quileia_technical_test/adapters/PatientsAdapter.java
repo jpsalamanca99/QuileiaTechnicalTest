@@ -54,7 +54,7 @@ public class PatientsAdapter extends BaseAdapter {
         }
 
         Patient patient = list.get(position);
-        viewHolder.name.setText(patient.getLastName() + " " + patient.getLastName());
+        viewHolder.name.setText(patient.getLastName() + " " + patient.getName());
         viewHolder.idNumber.setText(patient.getIdNumber());
 
         return convertView;

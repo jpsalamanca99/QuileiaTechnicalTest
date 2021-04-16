@@ -1,5 +1,6 @@
 package com.example.quileia_technical_test.activitys;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -7,13 +8,17 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.quileia_technical_test.R;
@@ -24,7 +29,9 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
@@ -62,6 +69,7 @@ public class PatientsActivity extends AppCompatActivity implements RealmChangeLi
             }
         });
 
+        registerForContextMenu(listView);
         this.setTitle("Lista de pacientes");
     }
 
@@ -71,6 +79,12 @@ public class PatientsActivity extends AppCompatActivity implements RealmChangeLi
         realm.beginTransaction();
         Patient patient = new Patient(name, lastName, birthDate, idNumber, medic, inTreatment, moderatedFee);
         realm.copyToRealm(patient);
+        realm.commitTransaction();
+    }
+    /*Delete*/
+    private void deletePatient(Patient patient){
+        realm.beginTransaction();
+        patient.deleteFromRealm();
         realm.commitTransaction();
     }
 
@@ -91,7 +105,19 @@ public class PatientsActivity extends AppCompatActivity implements RealmChangeLi
         final EditText moderatedFeeEditText = inflatedView.findViewById(R.id.editText_CreatePatient_ModeratedFeed);
         final CheckBox inTreatmentCheckBox = inflatedView.findViewById(R.id.checkBox_CreatePatient_InTreatment);
 
-        
+
+        //DB access to get the list of medics
+        RealmResults<Medic> medics = realm.where(Medic.class).findAll();
+        ArrayList<String> medicsNames = new ArrayList<>();
+        for (Medic medic: medics)
+            medicsNames.add(medic.getLastName() + " " + medic.getName());
+
+        //Spinner configuration
+        final Spinner spinner = inflatedView.findViewById(R.id.spinner_CreatePatient_Medic);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, medicsNames);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+
 
         builder.setPositiveButton("Crear", new DialogInterface.OnClickListener() {
             @Override
@@ -108,8 +134,9 @@ public class PatientsActivity extends AppCompatActivity implements RealmChangeLi
                 double moderatedFee = moderatedFeeEditText.getText().toString().trim().length() > 0 ? Float.parseFloat(moderatedFeeEditText.getText().toString().trim()) : 0;
                 boolean inTreatment = inTreatmentCheckBox.isChecked();
 
-                if (name.length() > 0 && lastName.length() > 0 && idNumber.length() > 0 && moderatedFee > 0){
-                    createNewPatient(name, lastName, birthDate, idNumber, new Medic(), inTreatment, moderatedFee);
+                if (name.length() > 0 && lastName.length() > 0 && idNumber.length() > 0 && moderatedFee > 0 && birthDate != null){
+                    Medic medic = medics.get(spinner.getSelectedItemPosition());
+                    createNewPatient(name, lastName, birthDate, idNumber, medic, inTreatment, moderatedFee);
                 } else {
                     Toast.makeText(getApplicationContext(), "Algun campo no fue llenado", Toast.LENGTH_SHORT).show();
                 }
@@ -121,6 +148,26 @@ public class PatientsActivity extends AppCompatActivity implements RealmChangeLi
         dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         dialog.show();
 
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
+        menu.setHeaderTitle(patients.get(info.position).getLastName() + " " + patients.get(info.position).getName());
+        getMenuInflater().inflate(R.menu.context_menu_delete, menu);
+    }
+
+    @Override
+    public boolean onContextItemSelected(@NonNull MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+
+        switch (item.getItemId()){
+            case R.id.item_ContextMenu_Delete:
+                deletePatient(patients.get(info.position));
+                return true;
+            default:
+                return super.onContextItemSelected(item);
+        }
     }
 
     @Override

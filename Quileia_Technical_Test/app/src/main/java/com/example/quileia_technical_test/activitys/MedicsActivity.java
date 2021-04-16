@@ -1,12 +1,15 @@
 package com.example.quileia_technical_test.activitys;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
@@ -56,6 +59,7 @@ public class MedicsActivity extends AppCompatActivity implements RealmChangeList
             }
         });
 
+        registerForContextMenu(listView);
         this.setTitle("Lista de medicos");
     }
 
@@ -65,6 +69,12 @@ public class MedicsActivity extends AppCompatActivity implements RealmChangeList
         realm.beginTransaction();
         Medic medic = new Medic(name, lastName, proCardCode, speciality, experienceYears, office, domicile);
         realm.copyToRealm(medic);
+        realm.commitTransaction();
+    }
+    /*Delete*/
+    private void deleteMedic(Medic medic){
+        realm.beginTransaction();
+        medic.deleteFromRealm();
         realm.commitTransaction();
     }
 
@@ -108,6 +118,26 @@ public class MedicsActivity extends AppCompatActivity implements RealmChangeList
         dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         dialog.show();
 
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
+        menu.setHeaderTitle(medics.get(info.position).getLastName() + " " + medics.get(info.position).getName());
+        getMenuInflater().inflate(R.menu.context_menu_delete, menu);
+    }
+
+    @Override
+    public boolean onContextItemSelected(@NonNull MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+
+        switch (item.getItemId()){
+            case R.id.item_ContextMenu_Delete:
+                deleteMedic(medics.get(info.position));
+                return true;
+            default:
+                return super.onContextItemSelected(item);
+        }
     }
 
     @Override
