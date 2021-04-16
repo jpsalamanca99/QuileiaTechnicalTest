@@ -7,14 +7,18 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,11 +26,19 @@ import com.example.quileia_technical_test.R;
 import com.example.quileia_technical_test.adapters.AppointmentsAdapter;
 import com.example.quileia_technical_test.models.Appointment;
 import com.example.quileia_technical_test.models.Medic;
+import com.example.quileia_technical_test.models.Patient;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 
 import io.realm.Realm;
+import io.realm.RealmChangeListener;
 import io.realm.RealmList;
+import io.realm.RealmResults;
 
-public class MedicDetailsActivity extends AppCompatActivity {
+public class MedicDetailsActivity extends AppCompatActivity implements RealmChangeListener<RealmResults<Appointment>> {
 
     private TextView nameTextView;
     private TextView specialityTextView;
@@ -56,7 +68,7 @@ public class MedicDetailsActivity extends AppCompatActivity {
         medic = realm.where(Medic.class).equalTo("ID", medicID).findFirst();
         appointments = medic.getAppointments();
 
-        Log.d("Numero de citas", appointments.size() + "");
+        Log.d("Citas medico", appointments.size() + "");
 
         nameTextView = findViewById(R.id.textView_MedicDetails_Name);
         specialityTextView = findViewById(R.id.textView_MedicDetails_Speciality);
@@ -70,6 +82,7 @@ public class MedicDetailsActivity extends AppCompatActivity {
         listView = findViewById(R.id.listView_MedicDetails_Appointments);
         listView.setAdapter(appointmentAdapter);
 
+        registerForContextMenu(listView);
         this.setTitle(medic.getLastName() + " " + medic.getName());
         setMedicInfo();
 
@@ -85,7 +98,7 @@ public class MedicDetailsActivity extends AppCompatActivity {
     }
 
     /*CRUD actions*/
-    /*Edit*/
+    /*Edit medic*/
     private void editMedic(String name, String lastName, String proCardCode, String speciality, float experienceYears, String office, boolean domicile){
         realm.beginTransaction();
         medic.setName(name);
@@ -99,8 +112,25 @@ public class MedicDetailsActivity extends AppCompatActivity {
         realm.commitTransaction();
     }
 
-    /*Edit dialog*/
-    private void showPopUpToEditMedic(String title, String message){
+    /*Edit appointment*/
+    private void editAppointment(Appointment appointment, Patient patient, Date date){
+        realm.beginTransaction();
+        appointment.setPatient(patient);
+        appointment.setDate(date);
+        realm.copyToRealmOrUpdate(appointment);
+        realm.commitTransaction();
+    }
+    /*Delete appointment*/
+    private void deleteAppointment(Appointment appointment){
+        realm.beginTransaction();
+        appointment.deleteFromRealm();
+        realm.commitTransaction();
+        Toast.makeText(getApplicationContext(), "Cita borrada", Toast.LENGTH_SHORT).show();
+    }
+
+    /*Dialogs*/
+    /*Shows the dialog to edit the medic*/
+    private void showDialogEditMedic(String title, String message){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
         if(title != null) builder.setTitle(title);
@@ -135,10 +165,75 @@ public class MedicDetailsActivity extends AppCompatActivity {
                 String office = officeEditText.getText().toString().trim();
                 boolean domicile = domicileCheckBox.isChecked();
 
-                if(name.length() > 0 && lastName.length() > 0 && proCardCode.length() > 0 && speciality.length() > 0 && office.length() > 0)
+                if(name.length() > 0 && lastName.length() > 0 && proCardCode.length() > 0 && speciality.length() > 0 && office.length() > 0){
                     editMedic(name, lastName, proCardCode, speciality, expYears, office, domicile);
+                    setMedicInfo();
+                }
                 else
                     Toast.makeText(getApplicationContext(), "Algun campo no fue llenado", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        builder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+        dialog.show();
+
+    }
+    /*Shows the dialog to edit an appointment*/
+    private void showDialogEditAppointment(Appointment appointment, String title, String message){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        if(title != null) builder.setTitle(title);
+        if(message != null) builder.setMessage(message);
+
+        View inflatedView = LayoutInflater.from(this).inflate(R.layout.layout_edit_appointment, null);
+        builder.setView(inflatedView);
+
+        final EditText dateEditText = inflatedView.findViewById(R.id.editText_EditAppointment);
+        dateEditText.setText(appointment.getDate().toString());
+        //DB access to get the list of medics
+        RealmResults<Patient> patients = realm.where(Patient.class).findAll();
+        ArrayList<String> patientsNames = new ArrayList<>();
+        for (Patient patient: patients)
+            patientsNames.add(patient.getLastName() + " " + patient.getName());
+
+        //Spinner configuration
+        final Spinner spinner = inflatedView.findViewById(R.id.spinner_EditAppointment);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, patientsNames);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+
+        builder.setPositiveButton("Guardar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Date date = null;
+                try {
+                    date = new SimpleDateFormat("dd/MM/yyyy").parse(dateEditText.getText().toString().trim());
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                if (date != null){
+                    Patient patient = patients.get(spinner.getSelectedItemPosition());
+                    editAppointment(appointment, patient, date);
+                } else {
+                    Toast.makeText(getApplicationContext(), "Algun campo no fue llenado", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+        });
+
+        builder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
             }
         });
 
@@ -148,6 +243,7 @@ public class MedicDetailsActivity extends AppCompatActivity {
 
     }
 
+    /*Options menu configuration*/
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.options_menu_edit, menu);
@@ -159,10 +255,40 @@ public class MedicDetailsActivity extends AppCompatActivity {
 
         switch (item.getItemId()){
             case R.id.item_OptionsMenu_Edit:
-                showPopUpToEditMedic("Editar medico", "Ingrese los nuevos datos");
+                showDialogEditMedic("Editar medico", "Ingrese los nuevos datos");
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
+    /*Context menu configuration*/
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
+        menu.setHeaderTitle(appointments.get(info.position).getMedic().getSpeciality());
+        getMenuInflater().inflate(R.menu.context_menu_appointments, menu);
+    }
+
+    @Override
+    public boolean onContextItemSelected(@NonNull MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        Appointment appointment = appointments.get(info.position);
+
+        switch (item.getItemId()){
+            case R.id.item_ContextMenu_Appointments_Delete:
+                deleteAppointment(appointment);
+                return true;
+            case R.id.item_ContextMenu_Appointments_Edit:
+                showDialogEditAppointment(appointment, "Editar cita","Ingrese los nuevos datos");
+                return true;
+            default:
+                return super.onContextItemSelected(item);
+        }
+    }
+    /*Configuration for the listView listener*/
+    @Override
+    public void onChange(RealmResults<Appointment> appointments) {
+        appointmentAdapter.notifyDataSetChanged();
+    }
+
 }

@@ -23,6 +23,7 @@ import android.widget.Toast;
 
 import com.example.quileia_technical_test.R;
 import com.example.quileia_technical_test.adapters.PatientsAdapter;
+import com.example.quileia_technical_test.models.Appointment;
 import com.example.quileia_technical_test.models.Medic;
 import com.example.quileia_technical_test.models.Patient;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -35,6 +36,7 @@ import java.util.List;
 
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
+import io.realm.RealmList;
 import io.realm.RealmResults;
 
 public class PatientsActivity extends AppCompatActivity implements RealmChangeListener<RealmResults<Patient>>, AdapterView.OnItemClickListener {
@@ -84,6 +86,10 @@ public class PatientsActivity extends AppCompatActivity implements RealmChangeLi
     /*Delete*/
     private void deletePatient(Patient patient){
         realm.beginTransaction();
+        RealmList<Appointment> appointments = patient.getAppointments();
+        for (Appointment appointment: appointments) {
+            appointment.deleteFromRealm();
+        }
         patient.deleteFromRealm();
         realm.commitTransaction();
     }

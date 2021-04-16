@@ -20,11 +20,14 @@ import android.widget.Toast;
 
 import com.example.quileia_technical_test.R;
 import com.example.quileia_technical_test.adapters.MedicsAdapter;
+import com.example.quileia_technical_test.models.Appointment;
 import com.example.quileia_technical_test.models.Medic;
+import com.example.quileia_technical_test.models.Patient;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
+import io.realm.RealmList;
 import io.realm.RealmResults;
 
 public class MedicsActivity extends AppCompatActivity implements RealmChangeListener<RealmResults<Medic>>, AdapterView.OnItemClickListener {
@@ -55,7 +58,7 @@ public class MedicsActivity extends AppCompatActivity implements RealmChangeList
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showPopUpToCreate("Crear nuevo médico", "Ingrese los datos del nuevo médico");
+                showDialogToCreate("Crear nuevo médico", "Ingrese los datos del nuevo médico");
             }
         });
 
@@ -64,22 +67,32 @@ public class MedicsActivity extends AppCompatActivity implements RealmChangeList
     }
 
     /*CRUD actions*/
-    /*Create*/
+    /*Create medic*/
     private void createNewMedic(String name, String lastName, String proCardCode, String speciality, float experienceYears, String office, boolean domicile) {
         realm.beginTransaction();
         Medic medic = new Medic(name, lastName, proCardCode, speciality, experienceYears, office, domicile);
         realm.copyToRealm(medic);
         realm.commitTransaction();
     }
-    /*Delete*/
+    /*Delete medic*/
     private void deleteMedic(Medic medic){
-        realm.beginTransaction();
-        medic.deleteFromRealm();
-        realm.commitTransaction();
+        RealmResults<Patient> patients = realm.where(Patient.class).equalTo("medic.ID", medic.getID()).findAll();
+
+        if (patients.size() > 0){
+            Toast.makeText(this, "Este medico tiene pacientes asignados", Toast.LENGTH_SHORT).show();
+        } else if (medic.getAppointments().size() > 0) {
+            showConfirmationDialog(medic);
+        } else {
+            realm.beginTransaction();
+            medic.deleteFromRealm();
+            realm.commitTransaction();
+            Toast.makeText(this, "Medico borrado", Toast.LENGTH_SHORT).show();
+        }
     }
 
+    /*Dialogs*/
     /* Shows the dialog to create a new medic*/
-    private void showPopUpToCreate(String title, String message){
+    private void showDialogToCreate(String title, String message){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
         if(title != null) builder.setTitle(title);
@@ -119,6 +132,39 @@ public class MedicsActivity extends AppCompatActivity implements RealmChangeList
         dialog.show();
 
     }
+    /*Shows the dialog to confirm the delete of a medic with appointments*/
+    private void showConfirmationDialog(Medic medic){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setTitle("Citas asignadas");
+        builder.setMessage("Este medico aun tiene " + medic.getAppointments().size() + " citas asignadas, ¿desea borrar al medico y sus citas programadas?");
+
+        builder.setPositiveButton("Borrar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                realm.beginTransaction();
+                RealmList<Appointment> appointments = medic.getAppointments();
+                for (Appointment appointment: appointments) {
+                    appointment.deleteFromRealm();
+                }
+                medic.deleteFromRealm();
+                realm.commitTransaction();
+                Toast.makeText(getApplicationContext(), "Medico borrado", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        builder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+        dialog.show();
+    }
+
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
