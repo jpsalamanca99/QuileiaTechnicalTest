@@ -11,6 +11,8 @@ import com.example.quileia_technical_test.R;
 import com.example.quileia_technical_test.models.Appointment;
 import com.example.quileia_technical_test.models.Medic;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 public class AppointmentsAdapter extends BaseAdapter {
@@ -18,6 +20,7 @@ public class AppointmentsAdapter extends BaseAdapter {
     private Context context;
     private List<Appointment> list;
     private int layout;
+    private DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 
     public AppointmentsAdapter(Context context, List<Appointment> list, int layout) {
         this.context = context;
@@ -60,7 +63,7 @@ public class AppointmentsAdapter extends BaseAdapter {
         viewHolder.patientName.setText(appointment.getPatient().getLastName() + " " + appointment.getPatient().getName());
         viewHolder.medicName.setText(appointment.getMedic().getLastName() + " " + appointment.getMedic().getName());
         viewHolder.speciality.setText(appointment.getMedic().getSpeciality());
-        viewHolder.date.setText(appointment.getDate().toString());
+        viewHolder.date.setText(dateFormat.format(appointment.getDate()));
 
 
         return convertView;

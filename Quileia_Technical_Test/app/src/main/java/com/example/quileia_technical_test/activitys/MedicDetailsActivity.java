@@ -28,6 +28,7 @@ import com.example.quileia_technical_test.models.Appointment;
 import com.example.quileia_technical_test.models.Medic;
 import com.example.quileia_technical_test.models.Patient;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -54,6 +55,7 @@ public class MedicDetailsActivity extends AppCompatActivity implements RealmChan
 
     private int medicID;
     private Medic medic;
+    private DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,10 +92,10 @@ public class MedicDetailsActivity extends AppCompatActivity implements RealmChan
 
     public void setMedicInfo(){
         nameTextView.setText(medic.getLastName() + " " + medic.getName());
-        specialityTextView.setText(medic.getSpeciality());
-        proCardCodeTextView.setText(medic.getProCardCode());
-        expYearsTextView.setText(String.valueOf(medic.getExperienceYears()));
-        officeTextView.setText(medic.getOffice());
+        specialityTextView.setText("Especialidad: " + medic.getSpeciality());
+        proCardCodeTextView.setText("Tarjeta profesional: " + medic.getProCardCode());
+        expYearsTextView.setText("Años de experiencia: " + String.valueOf(medic.getExperienceYears()));
+        officeTextView.setText("Oficina: " + medic.getOffice());
         domicileTextView.setText(medic.isDomicile() ? "Trabaja a domicilio" : "No trabaja a domicilio");
     }
 
@@ -114,6 +116,13 @@ public class MedicDetailsActivity extends AppCompatActivity implements RealmChan
     /*Edit appointment*/
     private void editAppointment(Appointment appointment, Patient patient, Date date){
         realm.beginTransaction();
+
+        //Remove from previous patient
+        Patient prevPatient = appointment.getPatient();
+        prevPatient.getAppointments().remove(prevPatient.getAppointments().indexOf(appointment));
+
+        //Add to the new patient
+        patient.getAppointments().add(appointment);
         appointment.setPatient(patient);
         appointment.setDate(date);
         realm.copyToRealmOrUpdate(appointment);
@@ -196,7 +205,7 @@ public class MedicDetailsActivity extends AppCompatActivity implements RealmChan
         builder.setView(inflatedView);
 
         final EditText dateEditText = inflatedView.findViewById(R.id.editText_EditAppointment);
-        dateEditText.setText(appointment.getDate().toString());
+        dateEditText.setText(dateFormat.format(appointment.getDate()));
         //DB access to get the list of medics
         RealmResults<Patient> patients = realm.where(Patient.class).findAll();
         ArrayList<String> patientsNames = new ArrayList<>();

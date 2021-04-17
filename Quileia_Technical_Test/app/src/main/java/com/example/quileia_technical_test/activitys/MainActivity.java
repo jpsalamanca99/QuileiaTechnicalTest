@@ -133,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
                 Patient patient = patients.get(patientsSpinner.getSelectedItemPosition());
                 Date appointmentDate = null;
                 try {
-                    appointmentDate = new SimpleDateFormat("dd/MM/yyyy").parse(appointmentDateEditText.getText().toString().trim());
+                    appointmentDate = new SimpleDateFormat("dd/MM/yyyy HH:mm").parse(appointmentDateEditText.getText().toString().trim());
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
@@ -152,4 +152,5 @@ public class MainActivity extends AppCompatActivity {
         dialog.show();
 
     }
+
 }

@@ -28,6 +28,7 @@ import com.example.quileia_technical_test.models.Appointment;
 import com.example.quileia_technical_test.models.Medic;
 import com.example.quileia_technical_test.models.Patient;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -54,6 +55,8 @@ public class PatientDetailsActivity extends AppCompatActivity implements RealmCh
 
     private int patientID;
     private Patient patient;
+    private DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,11 +93,11 @@ public class PatientDetailsActivity extends AppCompatActivity implements RealmCh
 
     public void setPatientInfo(){
         nameTextView.setText(patient.getLastName() + " " + patient.getName());
-        birthDateTextView.setText(patient.getBirthDate().toString());
-        idNumberTextView.setText(patient.getIdNumber());
-        medicTextView.setText(patient.getMedic().getLastName() + " " + patient.getMedic().getName());
+        birthDateTextView.setText("Fecha de nacimiento: " + dateFormat.format(patient.getBirthDate()));
+        idNumberTextView.setText("Numero de identificacion: " + patient.getIdNumber());
+        medicTextView.setText("Medico asignado: " + patient.getMedic().getLastName() + " " + patient.getMedic().getName());
         inTreatmentTextView.setText(patient.isInTreatment() ? "Esta en tratamiento" : "No esta en tratamiento");
-        moderatedFeeTextView.setText(String.valueOf(patient.getModeratedFee()));
+        moderatedFeeTextView.setText("Cuota moderadora: $" + String.valueOf(patient.getModeratedFee()));
     }
 
     /*CRUD actions*/
@@ -114,6 +117,13 @@ public class PatientDetailsActivity extends AppCompatActivity implements RealmCh
     /*Edit appointment*/
     private void editAppointment(Appointment appointment, Medic medic, Date date){
         realm.beginTransaction();
+
+        //Remove from the previous medic
+        Medic prevMedic = appointment.getMedic();
+        prevMedic.getAppointments().remove(prevMedic.getAppointments().indexOf(appointment));
+
+        //Add to the new medic
+        medic.getAppointments().add(appointment);
         appointment.setMedic(medic);
         appointment.setDate(date);
         realm.copyToRealmOrUpdate(appointment);
@@ -143,7 +153,7 @@ public class PatientDetailsActivity extends AppCompatActivity implements RealmCh
         final EditText lastNameEditText = inflatedView.findViewById(R.id.editText_CreatePatient_lastName);
         lastNameEditText.setText(patient.getLastName());
         final EditText birthDateEditText = inflatedView.findViewById(R.id.editText_CreatePatient_BirthDate);
-        birthDateEditText.setText(patient.getBirthDate().toString());
+        birthDateEditText.setText(dateFormat.format(patient.getBirthDate()));
         final EditText iDNumberEditText = inflatedView.findViewById(R.id.editText_CreatePatient_IDNumber);
         iDNumberEditText.setText(patient.getIdNumber());
         final EditText moderatedFeeEditText = inflatedView.findViewById(R.id.editText_CreatePatient_ModeratedFeed);
@@ -212,7 +222,7 @@ public class PatientDetailsActivity extends AppCompatActivity implements RealmCh
         builder.setView(inflatedView);
 
         final EditText dateEditText = inflatedView.findViewById(R.id.editText_EditAppointment);
-        dateEditText.setText(appointment.getDate().toString());
+        dateEditText.setText(dateFormat.format(appointment.getDate()));
         //DB access to get the list of medics
         RealmResults<Medic> medics = realm.where(Medic.class).findAll();
         ArrayList<String> medicsName = new ArrayList<>();
