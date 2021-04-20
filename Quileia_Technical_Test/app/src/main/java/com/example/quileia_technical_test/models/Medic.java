@@ -10,9 +10,9 @@ import io.realm.annotations.PrimaryKey;
 public class Medic extends RealmObject {
 
     @PrimaryKey
-    @Expose private int ID;
-    @Expose private String name;
-    @Expose private String lastName;
+    private int ID;
+    private String name;
+    private String lastName;
     private String proCardCode;
     private String speciality;
     private float experienceYears;

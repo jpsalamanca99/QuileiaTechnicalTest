@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
@@ -23,12 +24,12 @@ import com.example.quileia_technical_test.R;
 import com.example.quileia_technical_test.models.Appointment;
 import com.example.quileia_technical_test.models.Medic;
 import com.example.quileia_technical_test.models.Patient;
+import com.example.quileia_technical_test.serializers.MedicSerializer;
 import com.example.quileia_technical_test.services.APIInterface;
 import com.example.quileia_technical_test.services.MyAlarmReceiver;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import java.lang.reflect.Modifier;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -89,15 +90,12 @@ public class MainActivity extends AppCompatActivity {
         });
 
         this.setTitle("Menu principal");
-
-        testHTTP();
-
-        //scheduleAlarm();
+        scheduleAlarm();
     }
 
     /*CRUD actions*/
     /*Create appointment*/
-    private  void createAppointment(Medic medic, Patient patient, Date date){
+    private void createAppointment(Medic medic, Patient patient, Date date){
         realm.beginTransaction();
         Appointment appointment = new Appointment(patient, medic, date);
         realm.copyToRealm(appointment);
@@ -167,40 +165,6 @@ public class MainActivity extends AppCompatActivity {
         dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         dialog.show();
 
-    }
-
-
-    private void testHTTP(){
-        Gson gson = new GsonBuilder()
-                .excludeFieldsWithoutExposeAnnotation()
-                .serializeNulls()
-                .create();
-
-        Medic m = realm.where(Medic.class).findFirst();
-
-        String s = gson.toJson(m);
-
-        Log.d("XXXXXXXXXXXXXXXXXXXXXXX", m.getName());
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://192.168.0.12:3000/")
-                .addConverterFactory(GsonConverterFactory.create(gson))
-                .build();
-
-        APIInterface service = retrofit.create(APIInterface.class);
-        Call<Medic> call = service.postMedics(realm.where(Medic.class).findFirst());
-
-        call.enqueue(new Callback<Medic>() {
-            @Override
-            public void onResponse(Call<Medic> call, Response<Medic> response) {
-                Toast.makeText(getApplicationContext(), "Info recibida", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onFailure(Call<Medic> call, Throwable t) {
-                Log.e("ERROR", "-------------------------------" + t.toString() + "------------------------------------------------");
-            }
-        });
     }
 
     /*Setup the alarm and the service to sync the data in the webservice*/
