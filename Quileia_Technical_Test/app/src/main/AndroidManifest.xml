@@ -2,7 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.quileia_technical_test">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
+        android:usesCleartextTraffic="true"
+
         android:name=".app.MyApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -10,7 +14,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Quileia_Technical_Test">
-        <activity android:name=".activitys.PatientDetailsActivity"></activity>
+        <activity android:name=".activitys.PatientDetailsActivity"/>
         <activity android:name=".activitys.MedicDetailsActivity" />
         <activity android:name=".activitys.MedicsActivity" />
         <activity android:name=".activitys.PatientsActivity" />
@@ -21,6 +25,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <receiver
+            android:name=".services.MyAlarmReceiver"
+            android:process=":remote" >
+        </receiver>
+
+        <service
+            android:name=".services.MyTestService"
+            android:exported="false" />
+
     </application>
 
 </manifest>

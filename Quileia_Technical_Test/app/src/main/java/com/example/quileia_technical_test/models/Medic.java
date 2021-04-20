@@ -1,19 +1,18 @@
 package com.example.quileia_technical_test.models;
 
 import com.example.quileia_technical_test.app.MyApplication;
+import com.google.gson.annotations.Expose;
 
 import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
-import io.realm.annotations.Required;
 
 public class Medic extends RealmObject {
 
     @PrimaryKey
-    private int ID;
-
-    private String name;
-    private String lastName;
+    @Expose private int ID;
+    @Expose private String name;
+    @Expose private String lastName;
     private String proCardCode;
     private String speciality;
     private float experienceYears;

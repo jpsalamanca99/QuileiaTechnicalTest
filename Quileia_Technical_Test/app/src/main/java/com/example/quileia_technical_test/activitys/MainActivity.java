@@ -3,6 +3,9 @@ package com.example.quileia_technical_test.activitys;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -20,15 +23,24 @@ import com.example.quileia_technical_test.R;
 import com.example.quileia_technical_test.models.Appointment;
 import com.example.quileia_technical_test.models.Medic;
 import com.example.quileia_technical_test.models.Patient;
+import com.example.quileia_technical_test.services.APIInterface;
+import com.example.quileia_technical_test.services.MyAlarmReceiver;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
+import java.lang.reflect.Modifier;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
 import io.realm.Realm;
-import io.realm.RealmList;
 import io.realm.RealmResults;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -77,6 +89,10 @@ public class MainActivity extends AppCompatActivity {
         });
 
         this.setTitle("Menu principal");
+
+        testHTTP();
+
+        //scheduleAlarm();
     }
 
     /*CRUD actions*/
@@ -153,4 +169,54 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
+    private void testHTTP(){
+        Gson gson = new GsonBuilder()
+                .excludeFieldsWithoutExposeAnnotation()
+                .serializeNulls()
+                .create();
+
+        Medic m = realm.where(Medic.class).findFirst();
+
+        String s = gson.toJson(m);
+
+        Log.d("XXXXXXXXXXXXXXXXXXXXXXX", m.getName());
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("http://192.168.0.12:3000/")
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+
+        APIInterface service = retrofit.create(APIInterface.class);
+        Call<Medic> call = service.postMedics(realm.where(Medic.class).findFirst());
+
+        call.enqueue(new Callback<Medic>() {
+            @Override
+            public void onResponse(Call<Medic> call, Response<Medic> response) {
+                Toast.makeText(getApplicationContext(), "Info recibida", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(Call<Medic> call, Throwable t) {
+                Log.e("ERROR", "-------------------------------" + t.toString() + "------------------------------------------------");
+            }
+        });
+    }
+
+    /*Setup the alarm and the service to sync the data in the webservice*/
+    public void scheduleAlarm() {
+        Intent intent = new Intent(getApplicationContext(), MyAlarmReceiver.class);
+        final PendingIntent pIntent = PendingIntent.getBroadcast(this, MyAlarmReceiver.REQUEST_CODE, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        long firstMillis = System.currentTimeMillis();
+        AlarmManager alarm = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
+        alarm.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, firstMillis, 60000, pIntent);
+    }
+
 }
+
+
+
+
+
+
+
