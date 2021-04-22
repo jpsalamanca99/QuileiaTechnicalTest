@@ -21,8 +21,8 @@ public class AppointmentSerializer implements JsonSerializer<Appointment> {
                 .registerTypeAdapter(Medic.class, new MedicSerializer())
                 .registerTypeAdapter(Patient.class, new PatientSerializer())
                 .create();
-        jsonAppointment.addProperty("medic", gson.toJson(src.getMedic()));
-        jsonAppointment.addProperty("patient", gson.toJson(src.getPatient()));
+        jsonAppointment.addProperty("medic", gson.toJson(src.getMedic(), Medic.class));
+        jsonAppointment.addProperty("patient", gson.toJson(src.getPatient(), Patient.class));
         jsonAppointment.addProperty("date", src.getDate().toString());
         return jsonAppointment;
     }

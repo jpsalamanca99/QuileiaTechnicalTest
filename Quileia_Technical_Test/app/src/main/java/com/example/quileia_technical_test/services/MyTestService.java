@@ -55,6 +55,7 @@ public class MyTestService extends IntentService {
         postMedics();
         postPatients();
         postAppointments();
+        Toast.makeText(getApplicationContext(), "Info recibida", Toast.LENGTH_SHORT).show();
     }
 
     public void setUpProperties(){
@@ -81,7 +82,7 @@ public class MyTestService extends IntentService {
         medicsCall.enqueue(new Callback<RealmResults<Medic>>() {
             @Override
             public void onResponse(Call<RealmResults<Medic>> call, Response<RealmResults<Medic>> response) {
-                Toast.makeText(getApplicationContext(), "Info recibida", Toast.LENGTH_SHORT).show();
+                Log.d("POST Pacientes", "Se envio la info de los medicos");
             }
 
             @Override
@@ -95,7 +96,7 @@ public class MyTestService extends IntentService {
         patientsCall.enqueue(new Callback<RealmResults<Patient>>() {
             @Override
             public void onResponse(Call<RealmResults<Patient>> call, Response<RealmResults<Patient>> response) {
-                Toast.makeText(getApplicationContext(), "Info recibida", Toast.LENGTH_SHORT).show();
+                Log.d("POST Pacientes", "Se envio la info de los pacientes");
             }
 
             @Override
@@ -109,7 +110,7 @@ public class MyTestService extends IntentService {
         appointmentsCall.enqueue(new Callback<RealmResults<Appointment>>() {
             @Override
             public void onResponse(Call<RealmResults<Appointment>> call, Response<RealmResults<Appointment>> response) {
-                Toast.makeText(getApplicationContext(), "Info recibida", Toast.LENGTH_SHORT).show();
+                Log.d("POST Pacientes", "Se envio la info de las citas");
             }
 
             @Override
@@ -120,25 +121,3 @@ public class MyTestService extends IntentService {
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

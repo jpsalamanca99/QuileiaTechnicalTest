@@ -26,7 +26,7 @@ public class PatientSerializer implements JsonSerializer<Patient> {
         Gson gson = new GsonBuilder()
                 .registerTypeAdapter(Medic.class, new MedicSerializer())
                 .create();
-        jsonPatient.addProperty("medic", gson.toJson(src.getMedic()));
+        jsonPatient.addProperty("medic", gson.toJson(src.getMedic(), Medic.class));
         return jsonPatient;
     }
 
