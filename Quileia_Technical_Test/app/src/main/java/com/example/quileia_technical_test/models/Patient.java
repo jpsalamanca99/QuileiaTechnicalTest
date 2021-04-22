@@ -4,6 +4,7 @@ import com.example.quileia_technical_test.app.MyApplication;
 
 import java.util.Date;
 
+import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
@@ -99,6 +100,42 @@ public class Patient extends RealmObject {
 
     public RealmList<Appointment> getAppointments() {
         return list;
+    }
+
+    public String getFullName(){
+        return lastName + " " + name;
+    }
+
+    /*CRUD actions*/
+    /*Edit patient*/
+    public static void editPatient(Realm realm, Patient patient, String name, String lastName, Date birthDate, String idNumber, Medic medic, boolean inTreatment, double moderatedFee){
+        realm.beginTransaction();
+        patient.setName(name);
+        patient.setLastName(lastName);
+        patient.setBirthDate(birthDate);
+        patient.setIdNumber(idNumber);
+        patient.setMedic(medic);
+        patient.setInTreatment(inTreatment);
+        patient.setModeratedFee(moderatedFee);
+        realm.copyToRealmOrUpdate(patient);
+        realm.commitTransaction();
+    }
+    /*Create*/
+    public static void createPatient(Realm realm, String name, String lastName, Date birthDate, String idNumber, Medic medic, boolean inTreatment, double moderatedFee) {
+        realm.beginTransaction();
+        Patient patient = new Patient(name, lastName, birthDate, idNumber, medic, inTreatment, moderatedFee);
+        realm.copyToRealm(patient);
+        realm.commitTransaction();
+    }
+    /*Delete*/
+    public static void deletePatient(Realm realm, Patient patient){
+        realm.beginTransaction();
+        RealmList<Appointment> appointments = patient.getAppointments();
+        for (Appointment appointment: appointments) {
+            appointment.deleteFromRealm();
+        }
+        patient.deleteFromRealm();
+        realm.commitTransaction();
     }
 
 }

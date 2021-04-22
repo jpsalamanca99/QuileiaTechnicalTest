@@ -60,11 +60,6 @@ public class MainActivity extends AppCompatActivity {
 
         realm = Realm.getDefaultInstance();
 
-        /*
-        realm.beginTransaction();
-        realm.deleteAll();
-        realm.commitTransaction();*/
-
         patientsButton = findViewById(R.id.button_Main_Patients);
         medicsButton = findViewById(R.id.button_Main_Medics);
         appointmentButton = findViewById(R.id.button_Main_Appointments);
@@ -92,17 +87,6 @@ public class MainActivity extends AppCompatActivity {
 
         this.setTitle("Menu principal");
         scheduleAlarm();
-    }
-
-    /*CRUD actions*/
-    /*Create appointment*/
-    private void createAppointment(Medic medic, Patient patient, Date date){
-        realm.beginTransaction();
-        Appointment appointment = new Appointment(patient, medic, date);
-        realm.copyToRealm(appointment);
-        medic.getAppointments().add(appointment);
-        patient.getAppointments().add(appointment);
-        realm.commitTransaction();
     }
 
     /* Shows the dialog to create a new appointment*/
@@ -154,12 +138,18 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 if (medic != null && patient != null && appointmentDate != null){
-                    createAppointment(medic, patient, appointmentDate);
+                    Appointment.createAppointment(realm, medic, patient, appointmentDate);
                 } else {
                     Toast.makeText(getApplicationContext(), "Algun campo no fue llenado", Toast.LENGTH_SHORT).show();
                 }
             }
 
+        });
+        builder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
         });
 
         AlertDialog dialog = builder.create();

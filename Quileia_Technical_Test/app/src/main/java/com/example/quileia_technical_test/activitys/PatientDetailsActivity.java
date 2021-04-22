@@ -71,8 +71,6 @@ public class PatientDetailsActivity extends AppCompatActivity implements RealmCh
         patient = realm.where(Patient.class).equalTo("ID", patientID).findFirst();
         appointments = patient.getAppointments();
 
-        Log.d("Citas paciente", appointments.size() + "");
-
         nameTextView = findViewById(R.id.textView_PatientDetails_Name);
         birthDateTextView = findViewById(R.id.textView_PatientDetails_BirthDate);
         idNumberTextView = findViewById(R.id.textView_PatientDetails_IDNumber);
@@ -86,55 +84,18 @@ public class PatientDetailsActivity extends AppCompatActivity implements RealmCh
         listView.setAdapter(appointmentAdapter);
 
         registerForContextMenu(listView);
-        this.setTitle(patient.getLastName() + " " + patient.getName());
+        this.setTitle(patient.getFullName());
         setPatientInfo();
 
     }
 
     public void setPatientInfo(){
-        nameTextView.setText(patient.getLastName() + " " + patient.getName());
+        nameTextView.setText(patient.getFullName());
         birthDateTextView.setText("Fecha de nacimiento: " + dateFormat.format(patient.getBirthDate()));
         idNumberTextView.setText("Numero de identificacion: " + patient.getIdNumber());
-        medicTextView.setText("Medico asignado: " + patient.getMedic().getLastName() + " " + patient.getMedic().getName());
+        medicTextView.setText("Medico asignado: " + patient.getMedic().getFullName());
         inTreatmentTextView.setText(patient.isInTreatment() ? "Esta en tratamiento" : "No esta en tratamiento");
         moderatedFeeTextView.setText("Cuota moderadora: $" + String.valueOf(patient.getModeratedFee()));
-    }
-
-    /*CRUD actions*/
-    /*Edit patient*/
-    private void editPatient(String name, String lastName, Date birthDate, String idNumber, Medic medic, boolean inTreatment, double moderatedFee){
-        realm.beginTransaction();
-        patient.setName(name);
-        patient.setLastName(lastName);
-        patient.setBirthDate(birthDate);
-        patient.setIdNumber(idNumber);
-        patient.setMedic(medic);
-        patient.setInTreatment(inTreatment);
-        patient.setModeratedFee(moderatedFee);
-        realm.copyToRealmOrUpdate(patient);
-        realm.commitTransaction();
-    }
-    /*Edit appointment*/
-    private void editAppointment(Appointment appointment, Medic medic, Date date){
-        realm.beginTransaction();
-
-        //Remove from the previous medic
-        Medic prevMedic = appointment.getMedic();
-        prevMedic.getAppointments().remove(prevMedic.getAppointments().indexOf(appointment));
-
-        //Add to the new medic
-        medic.getAppointments().add(appointment);
-        appointment.setMedic(medic);
-        appointment.setDate(date);
-        realm.copyToRealmOrUpdate(appointment);
-        realm.commitTransaction();
-    }
-    /*Delete appointment*/
-    private void deleteAppointment(Appointment appointment){
-        realm.beginTransaction();
-        appointment.deleteFromRealm();
-        realm.commitTransaction();
-        Toast.makeText(getApplicationContext(), "Cita borrada", Toast.LENGTH_SHORT).show();
     }
 
     /*Dialogs*/
@@ -190,7 +151,7 @@ public class PatientDetailsActivity extends AppCompatActivity implements RealmCh
 
                 if (name.length() > 0 && lastName.length() > 0 && idNumber.length() > 0 && moderatedFee > 0 && birthDate != null){
                     Medic medic = medics.get(spinner.getSelectedItemPosition());
-                    editPatient(name, lastName, birthDate, idNumber, medic, inTreatment, moderatedFee);
+                    Patient.editPatient(realm, patient, name, lastName, birthDate, idNumber, medic, inTreatment, moderatedFee);
                     setPatientInfo();
                 } else {
                     Toast.makeText(getApplicationContext(), "Algun campo no fue llenado", Toast.LENGTH_SHORT).show();
@@ -247,7 +208,8 @@ public class PatientDetailsActivity extends AppCompatActivity implements RealmCh
 
                 if (date != null){
                     Medic medic = medics.get(spinner.getSelectedItemPosition());
-                    editAppointment(appointment, medic, date);
+                    Appointment.editAppointment(realm, appointment, medic, date);
+                    Toast.makeText(getApplicationContext(), "Cita editada", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(getApplicationContext(), "Algun campo no fue llenado", Toast.LENGTH_SHORT).show();
                 }
@@ -274,7 +236,6 @@ public class PatientDetailsActivity extends AppCompatActivity implements RealmCh
         getMenuInflater().inflate(R.menu.options_menu_edit, menu);
         return super.onCreateOptionsMenu(menu);
     }
-
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
@@ -293,7 +254,6 @@ public class PatientDetailsActivity extends AppCompatActivity implements RealmCh
         menu.setHeaderTitle(appointments.get(info.position).getMedic().getSpeciality());
         getMenuInflater().inflate(R.menu.context_menu_appointments, menu);
     }
-
     @Override
     public boolean onContextItemSelected(@NonNull MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
@@ -301,7 +261,7 @@ public class PatientDetailsActivity extends AppCompatActivity implements RealmCh
 
         switch (item.getItemId()){
             case R.id.item_ContextMenu_Appointments_Delete:
-                deleteAppointment(appointment);
+                Appointment.deleteAppointment(realm, appointment);
                 return true;
             case R.id.item_ContextMenu_Appointments_Edit:
                 showDialogEditAppointment(appointment, "Editar cita","Ingrese los nuevos datos");

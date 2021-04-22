@@ -66,15 +66,7 @@ public class MedicsActivity extends AppCompatActivity implements RealmChangeList
         this.setTitle("Lista de medicos");
     }
 
-    /*CRUD actions*/
-    /*Create medic*/
-    private void createNewMedic(String name, String lastName, String proCardCode, String speciality, float experienceYears, String office, boolean domicile) {
-        realm.beginTransaction();
-        Medic medic = new Medic(name, lastName, proCardCode, speciality, experienceYears, office, domicile);
-        realm.copyToRealm(medic);
-        realm.commitTransaction();
-    }
-    /*Delete medic*/
+    /*Checks if the medic can be deleted*/
     private void deleteMedic(Medic medic){
         RealmResults<Patient> patients = realm.where(Patient.class).equalTo("medic.ID", medic.getID()).findAll();
 
@@ -83,9 +75,7 @@ public class MedicsActivity extends AppCompatActivity implements RealmChangeList
         } else if (medic.getAppointments().size() > 0) {
             showConfirmationDialog(medic);
         } else {
-            realm.beginTransaction();
-            medic.deleteFromRealm();
-            realm.commitTransaction();
+            Medic.deleteMedic(realm, medic);
             Toast.makeText(this, "Medico borrado", Toast.LENGTH_SHORT).show();
         }
     }
@@ -121,7 +111,7 @@ public class MedicsActivity extends AppCompatActivity implements RealmChangeList
                 boolean domicile = domicileCheckBox.isChecked();
 
                 if(name.length() > 0 && lastName.length() > 0 && proCardCode.length() > 0 && speciality.length() > 0 && office.length() > 0)
-                    createNewMedic(name, lastName, proCardCode, speciality, expYears, office, domicile);
+                    Medic.createNewMedic(realm, name, lastName, proCardCode, speciality, expYears, office, domicile);
                 else
                     Toast.makeText(getApplicationContext(), "Algun campo no fue llenado", Toast.LENGTH_SHORT).show();
             }
@@ -142,13 +132,7 @@ public class MedicsActivity extends AppCompatActivity implements RealmChangeList
         builder.setPositiveButton("Borrar", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                realm.beginTransaction();
-                RealmList<Appointment> appointments = medic.getAppointments();
-                for (Appointment appointment: appointments) {
-                    appointment.deleteFromRealm();
-                }
-                medic.deleteFromRealm();
-                realm.commitTransaction();
+                Medic.deleteMedic(realm, medic);
                 Toast.makeText(getApplicationContext(), "Medico borrado", Toast.LENGTH_SHORT).show();
             }
         });
@@ -165,14 +149,13 @@ public class MedicsActivity extends AppCompatActivity implements RealmChangeList
         dialog.show();
     }
 
-
+    /*Configures the context menu*/
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
         menu.setHeaderTitle(medics.get(info.position).getLastName() + " " + medics.get(info.position).getName());
         getMenuInflater().inflate(R.menu.context_menu_delete, menu);
     }
-
     @Override
     public boolean onContextItemSelected(@NonNull MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
@@ -185,12 +168,12 @@ public class MedicsActivity extends AppCompatActivity implements RealmChangeList
                 return super.onContextItemSelected(item);
         }
     }
-
+    /*Configures the on change listener for the list of medics*/
     @Override
     public void onChange(RealmResults<Medic> medics) {
         adapter.notifyDataSetChanged();
     }
-
+    /*Configures the onItemClick for the medics list*/
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Intent intent = new Intent(MedicsActivity.this, MedicDetailsActivity.class);

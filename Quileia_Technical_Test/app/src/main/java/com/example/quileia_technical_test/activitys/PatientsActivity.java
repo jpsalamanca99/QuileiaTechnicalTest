@@ -75,25 +75,6 @@ public class PatientsActivity extends AppCompatActivity implements RealmChangeLi
         this.setTitle("Lista de pacientes");
     }
 
-    /*CRUD actions*/
-    /*Create*/
-    private void createNewPatient(String name, String lastName, Date birthDate, String idNumber, Medic medic, boolean inTreatment, double moderatedFee) {
-        realm.beginTransaction();
-        Patient patient = new Patient(name, lastName, birthDate, idNumber, medic, inTreatment, moderatedFee);
-        realm.copyToRealm(patient);
-        realm.commitTransaction();
-    }
-    /*Delete*/
-    private void deletePatient(Patient patient){
-        realm.beginTransaction();
-        RealmList<Appointment> appointments = patient.getAppointments();
-        for (Appointment appointment: appointments) {
-            appointment.deleteFromRealm();
-        }
-        patient.deleteFromRealm();
-        realm.commitTransaction();
-    }
-
     /* Shows the dialog to create a new patient*/
     private void showPopUpToCreate(String title, String message){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -142,7 +123,7 @@ public class PatientsActivity extends AppCompatActivity implements RealmChangeLi
 
                 if (name.length() > 0 && lastName.length() > 0 && idNumber.length() > 0 && moderatedFee > 0 && birthDate != null){
                     Medic medic = medics.get(spinner.getSelectedItemPosition());
-                    createNewPatient(name, lastName, birthDate, idNumber, medic, inTreatment, moderatedFee);
+                    Patient.createPatient(realm, name, lastName, birthDate, idNumber, medic, inTreatment, moderatedFee);
                 } else {
                     Toast.makeText(getApplicationContext(), "Algun campo no fue llenado", Toast.LENGTH_SHORT).show();
                 }
@@ -150,37 +131,43 @@ public class PatientsActivity extends AppCompatActivity implements RealmChangeLi
 
         });
 
+        builder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
         AlertDialog dialog = builder.create();
         dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         dialog.show();
 
     }
-
+    /*Configures the context menu*/
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
         menu.setHeaderTitle(patients.get(info.position).getLastName() + " " + patients.get(info.position).getName());
         getMenuInflater().inflate(R.menu.context_menu_delete, menu);
     }
-
     @Override
     public boolean onContextItemSelected(@NonNull MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
 
         switch (item.getItemId()){
             case R.id.item_ContextMenu_Delete:
-                deletePatient(patients.get(info.position));
+                Patient.deletePatient(realm, patients.get(info.position));
                 return true;
             default:
                 return super.onContextItemSelected(item);
         }
     }
-
+    /*Configures the onChange of the ListView*/
     @Override
     public void onChange(RealmResults<Patient> patients) {
         adapter.notifyDataSetChanged();
     }
-
+    /*Configures the onItemClick of the ListView*/
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Intent intent = new Intent(PatientsActivity.this, PatientDetailsActivity.class);

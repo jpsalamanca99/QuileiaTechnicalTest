@@ -70,8 +70,6 @@ public class MedicDetailsActivity extends AppCompatActivity implements RealmChan
         medic = realm.where(Medic.class).equalTo("ID", medicID).findFirst();
         appointments = medic.getAppointments();
 
-        Log.d("Citas medico", appointments.size() + "");
-
         nameTextView = findViewById(R.id.textView_MedicDetails_Name);
         specialityTextView = findViewById(R.id.textView_MedicDetails_Speciality);
         proCardCodeTextView = findViewById(R.id.textView_MedicDetails_ProCardCode);
@@ -85,7 +83,7 @@ public class MedicDetailsActivity extends AppCompatActivity implements RealmChan
         listView.setAdapter(appointmentAdapter);
 
         registerForContextMenu(listView);
-        this.setTitle(medic.getLastName() + " " + medic.getName());
+        this.setTitle(medic.getFullName());
         setMedicInfo();
 
     }
@@ -97,43 +95,6 @@ public class MedicDetailsActivity extends AppCompatActivity implements RealmChan
         expYearsTextView.setText("Años de experiencia: " + String.valueOf(medic.getExperienceYears()));
         officeTextView.setText("Oficina: " + medic.getOffice());
         domicileTextView.setText(medic.isDomicile() ? "Trabaja a domicilio" : "No trabaja a domicilio");
-    }
-
-    /*CRUD actions*/
-    /*Edit medic*/
-    private void editMedic(String name, String lastName, String proCardCode, String speciality, float experienceYears, String office, boolean domicile){
-        realm.beginTransaction();
-        medic.setName(name);
-        medic.setLastName(lastName);
-        medic.setProCardCode(proCardCode);
-        medic.setSpeciality(speciality);
-        medic.setExperienceYears(experienceYears);
-        medic.setOffice(office);
-        medic.setDomicile(domicile);
-        realm.copyToRealmOrUpdate(medic);
-        realm.commitTransaction();
-    }
-    /*Edit appointment*/
-    private void editAppointment(Appointment appointment, Patient patient, Date date){
-        realm.beginTransaction();
-
-        //Remove from previous patient
-        Patient prevPatient = appointment.getPatient();
-        prevPatient.getAppointments().remove(prevPatient.getAppointments().indexOf(appointment));
-
-        //Add to the new patient
-        patient.getAppointments().add(appointment);
-        appointment.setPatient(patient);
-        appointment.setDate(date);
-        realm.copyToRealmOrUpdate(appointment);
-        realm.commitTransaction();
-    }
-    /*Delete appointment*/
-    private void deleteAppointment(Appointment appointment){
-        realm.beginTransaction();
-        appointment.deleteFromRealm();
-        realm.commitTransaction();
-        Toast.makeText(getApplicationContext(), "Cita borrada", Toast.LENGTH_SHORT).show();
     }
 
     /*Dialogs*/
@@ -174,7 +135,7 @@ public class MedicDetailsActivity extends AppCompatActivity implements RealmChan
                 boolean domicile = domicileCheckBox.isChecked();
 
                 if(name.length() > 0 && lastName.length() > 0 && proCardCode.length() > 0 && speciality.length() > 0 && office.length() > 0){
-                    editMedic(name, lastName, proCardCode, speciality, expYears, office, domicile);
+                    Medic.editMedic(realm, medic, name, lastName, proCardCode, speciality, expYears, office, domicile);
                     setMedicInfo();
                 }
                 else
@@ -230,7 +191,7 @@ public class MedicDetailsActivity extends AppCompatActivity implements RealmChan
 
                 if (date != null){
                     Patient patient = patients.get(spinner.getSelectedItemPosition());
-                    editAppointment(appointment, patient, date);
+                    Appointment.editAppointment(realm, appointment, patient, date);
                 } else {
                     Toast.makeText(getApplicationContext(), "Algun campo no fue llenado", Toast.LENGTH_SHORT).show();
                 }
@@ -257,7 +218,6 @@ public class MedicDetailsActivity extends AppCompatActivity implements RealmChan
         getMenuInflater().inflate(R.menu.options_menu_edit, menu);
         return super.onCreateOptionsMenu(menu);
     }
-
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
@@ -269,6 +229,7 @@ public class MedicDetailsActivity extends AppCompatActivity implements RealmChan
                 return super.onOptionsItemSelected(item);
         }
     }
+
     /*Context menu configuration*/
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
@@ -276,7 +237,6 @@ public class MedicDetailsActivity extends AppCompatActivity implements RealmChan
         menu.setHeaderTitle(appointments.get(info.position).getMedic().getSpeciality());
         getMenuInflater().inflate(R.menu.context_menu_appointments, menu);
     }
-
     @Override
     public boolean onContextItemSelected(@NonNull MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
@@ -284,7 +244,7 @@ public class MedicDetailsActivity extends AppCompatActivity implements RealmChan
 
         switch (item.getItemId()){
             case R.id.item_ContextMenu_Appointments_Delete:
-                deleteAppointment(appointment);
+                Appointment.deleteAppointment(getApplicationContext(), realm, appointment);
                 return true;
             case R.id.item_ContextMenu_Appointments_Edit:
                 showDialogEditAppointment(appointment, "Editar cita","Ingrese los nuevos datos");
@@ -293,7 +253,8 @@ public class MedicDetailsActivity extends AppCompatActivity implements RealmChan
                 return super.onContextItemSelected(item);
         }
     }
-    /*Configuration for the listView listener*/
+
+    /*Configures the onChange method for the ListView*/
     @Override
     public void onChange(RealmResults<Appointment> appointments) {
         appointmentAdapter.notifyDataSetChanged();
