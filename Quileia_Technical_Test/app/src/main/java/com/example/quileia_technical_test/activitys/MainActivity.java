@@ -1,5 +1,6 @@
 package com.example.quileia_technical_test.activitys;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -10,9 +11,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.SystemClock;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
@@ -25,11 +26,7 @@ import com.example.quileia_technical_test.R;
 import com.example.quileia_technical_test.models.Appointment;
 import com.example.quileia_technical_test.models.Medic;
 import com.example.quileia_technical_test.models.Patient;
-import com.example.quileia_technical_test.serializers.MedicSerializer;
-import com.example.quileia_technical_test.services.APIInterface;
 import com.example.quileia_technical_test.services.MyAlarmReceiver;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -38,11 +35,6 @@ import java.util.Date;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -51,6 +43,8 @@ public class MainActivity extends AppCompatActivity {
     private Button patientsButton;
     private Button medicsButton;
     private Button appointmentButton;
+    private AlarmManager alarmMgr;
+    PendingIntent alarmIntent;
 
 
     @Override
@@ -86,10 +80,11 @@ public class MainActivity extends AppCompatActivity {
         });
 
         this.setTitle("Menu principal");
-        scheduleAlarm();
+        scheduleAlarm(30);
     }
 
-    /* Shows the dialog to create a new appointment*/
+    /*Dialogs*/
+    /*Shows the dialog to create a new appointment*/
     private void showPopUpToCreate(String title, String message){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
@@ -157,16 +152,63 @@ public class MainActivity extends AppCompatActivity {
         dialog.show();
 
     }
+    /*Shows the dialog to edit the sync interval*/
+    private void showDialogEditInterval(String title, String message){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
+        if(title != null) builder.setTitle(title);
+        if(message != null) builder.setMessage(message);
+
+        View inflatedView = LayoutInflater.from(this).inflate(R.layout.layout_set_alarm_interval, null);
+        builder.setView(inflatedView);
+
+        final EditText timeDateEditText = inflatedView.findViewById(R.id.editText_EditInterval);
+
+        builder.setPositiveButton("Establecer", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                scheduleAlarm(Integer.parseInt(timeDateEditText.getText().toString()));
+            }
+
+        });
+        builder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+        dialog.show();
+
+    }
     /*Setup the alarm and the service to sync the data in the webservice*/
-    public void scheduleAlarm() {
-        AlarmManager alarmMgr = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
+    public void scheduleAlarm(int interval) {
+        if (alarmMgr != null) alarmMgr.cancel(alarmIntent);
+        alarmMgr = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(this, MyAlarmReceiver.class);
-        PendingIntent alarmIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
+        alarmIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
         alarmMgr.setInexactRepeating(AlarmManager.ELAPSED_REALTIME,
-                SystemClock.elapsedRealtime() + 60 * 1000, 60000, alarmIntent);
+                SystemClock.elapsedRealtime(), interval * 60000, alarmIntent);
     }
 
+    /*Configures the options menu*/
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.options_menu_interval, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.item_MainMenu_Time:
+                showDialogEditInterval("Editar intervalo", "Ingrese el nuevo intervalo en minutos");
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 }
 
 

@@ -244,7 +244,7 @@ public class MedicDetailsActivity extends AppCompatActivity implements RealmChan
 
         switch (item.getItemId()){
             case R.id.item_ContextMenu_Appointments_Delete:
-                Appointment.deleteAppointment(getApplicationContext(), realm, appointment);
+                Appointment.deleteAppointment(realm, appointment);
                 return true;
             case R.id.item_ContextMenu_Appointments_Edit:
                 showDialogEditAppointment(appointment, "Editar cita","Ingrese los nuevos datos");

@@ -9,7 +9,9 @@ import android.widget.Toast;
 import com.example.quileia_technical_test.models.Appointment;
 import com.example.quileia_technical_test.models.Medic;
 import com.example.quileia_technical_test.models.Patient;
+import com.example.quileia_technical_test.serializers.AppointmentSerializer;
 import com.example.quileia_technical_test.serializers.MedicSerializer;
+import com.example.quileia_technical_test.serializers.PatientSerializer;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -59,6 +61,8 @@ public class MyTestService extends IntentService {
         if (realm == null) realm = Realm.getDefaultInstance();
         if (gson == null) gson = new GsonBuilder()
                 .registerTypeAdapter(Medic.class, new MedicSerializer())
+                .registerTypeAdapter(Patient.class, new PatientSerializer())
+                .registerTypeAdapter(Appointment.class, new AppointmentSerializer())
                 .create();
         if (retrofit == null) retrofit = new Retrofit.Builder()
                 .baseUrl("http://192.168.0.12:3000/")
